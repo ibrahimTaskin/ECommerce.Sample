@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.API", "Order.API\Orde
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{DAE8F8B6-4CBE-40B8-871D-F96EF367EE66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock.API", "Stock.API\Stock.API.csproj", "{9F5B9138-4894-4115-8D16-E3DFAC6AB164}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DAE8F8B6-4CBE-40B8-871D-F96EF367EE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAE8F8B6-4CBE-40B8-871D-F96EF367EE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAE8F8B6-4CBE-40B8-871D-F96EF367EE66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F5B9138-4894-4115-8D16-E3DFAC6AB164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F5B9138-4894-4115-8D16-E3DFAC6AB164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F5B9138-4894-4115-8D16-E3DFAC6AB164}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F5B9138-4894-4115-8D16-E3DFAC6AB164}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
