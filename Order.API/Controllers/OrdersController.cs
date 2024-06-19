@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Order.API.Models;
 using Order.API.Models.Entities;
 using Order.API.ViewModels;
+using Shared.Events;
+using Shared.Messages;
 
 namespace Order.API.Controllers
 {
@@ -11,9 +14,11 @@ namespace Order.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly OrderDbContext _context;
-        public OrdersController(OrderDbContext context)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public OrdersController(OrderDbContext context, IPublishEndpoint publishEndpoint)
         {
-           _context = context;
+            _context = context;
+            _publishEndpoint = publishEndpoint;
         }
         [HttpPost]
         public async Task<IActionResult> CreateOrder(CreateOrderVm createOrder)
@@ -24,7 +29,7 @@ namespace Order.API.Controllers
                 BuyerId = createOrder.BuyerId,
                 OrderStatu = Models.Enums.OrderStatus.Suspend,
                 CreatedDate = DateTime.Now,
-                TotalPrice = createOrder.CreateOrderItems.Sum(c => c.Count)
+                TotalPrice = createOrder.CreateOrderItems.Sum(c => c.Price * c.Count)
             };
 
             order.OrderItems = createOrder.CreateOrderItems.Select(s => new OrderItem
@@ -37,6 +42,20 @@ namespace Order.API.Controllers
 
             _context.Orders.Add(order);
             _context.SaveChanges();
+
+            OrderCreatedEvent orderCreatedEvent = new OrderCreatedEvent()
+            {
+                OrderId = order.OrderId,
+                BuyerId = order.BuyerId,
+                OrderItems = order.OrderItems
+                            .Select(s => new OrderItemMessage
+                            {
+                                ProductId = s.ProductId,
+                                Count = s.Count
+                            }).ToList()
+            };
+
+            await _publishEndpoint.Publish(orderCreatedEvent);
 
             return Ok(order);
         }
