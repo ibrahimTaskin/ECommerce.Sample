@@ -47,6 +47,7 @@ namespace Order.API.Controllers
             {
                 OrderId = order.OrderId,
                 BuyerId = order.BuyerId,
+                TotalPrice = order.TotalPrice,
                 OrderItems = order.OrderItems
                             .Select(s => new OrderItemMessage
                             {
