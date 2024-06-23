@@ -39,7 +39,7 @@ namespace Stock.API.Consumers
                     TotalPrice = context.Message.TotalPrice
                 };
 
-                ISendEndpoint sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue: {RabbitMqSettings.PaymentStokReservedEvetQueue}"));
+                ISendEndpoint sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue: {RabbitMqSettings.PaymentStokReservedEventQueue}"));
                 await sendEndpoint.Send(stockReservedEvent);
             }
             else // Stok yetersiz 

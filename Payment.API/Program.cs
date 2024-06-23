@@ -18,7 +18,7 @@ builder.Services.AddMassTransit(config =>
     config.UsingRabbitMq((context, _congif) =>
     {
         _congif.Host(builder.Configuration["RabbitMq"]);
-        _congif.ReceiveEndpoint(RabbitMqSettings.PaymentStokReservedEvetQueue,
+        _congif.ReceiveEndpoint(RabbitMqSettings.PaymentStokReservedEventQueue,
                 e => e.ConfigureConsumer<PaymentReservedEventConsumer>(context));
     });
 });
