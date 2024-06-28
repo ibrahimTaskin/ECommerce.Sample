@@ -9,7 +9,7 @@
 
     public class CreateOrderItemVm
     {
-        public Guid ProductId { get; set; }
+        public string ProductId { get; set; }
         public int Price { get; set; }
         public int Count { get; set; }
     }

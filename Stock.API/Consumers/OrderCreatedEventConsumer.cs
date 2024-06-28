@@ -11,10 +11,12 @@ namespace Stock.API.Consumers
     {
         IMongoCollection<Stock.API.Models.Entities.Stock> _stockCollection;
         private readonly ISendEndpointProvider _sendEndpointProvider;
-        public OrderCreatedEventConsumer(IMongoDbService mongoDbService, ISendEndpointProvider sendEndpointProvider)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public OrderCreatedEventConsumer(IMongoDbService mongoDbService, ISendEndpointProvider sendEndpointProvider, IPublishEndpoint publishEndpoint)
         {
             _stockCollection = mongoDbService.GetCollection<Stock.API.Models.Entities.Stock>();
             _sendEndpointProvider = sendEndpointProvider;
+            _publishEndpoint = publishEndpoint;
         }
         public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
@@ -39,14 +41,25 @@ namespace Stock.API.Consumers
                     TotalPrice = context.Message.TotalPrice
                 };
 
-                ISendEndpoint sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue: {RabbitMqSettings.PaymentStokReservedEventQueue}"));
+                // Tek bir yer dinlediği için send ile ilgili consumer'a gonderdik.
+                ISendEndpoint sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{RabbitMqSettings.OrderStokReservedEventQueue}"));
                 await sendEndpoint.Send(stockReservedEvent);
-            }
-            else // Stok yetersiz 
-            {
 
+                await Console.Out.WriteLineAsync("Stok işlemleri başarılı.");
             }
-            Console.WriteLine(context.Message.OrderId + " " + context.Message.BuyerId);
+            else // Stok yetersiz. İlgili OrderId'ye git ve başarısız olarak işaretle
+            {
+                StockNotReservedEvent stockNotReservedEvent = new()
+                {
+                    OrderId = context.Message.OrderId,
+                    BuyerId = context.Message.BuyerId,
+                    Message = "Stok yetersiz."
+                };
+                // Birden çok yer dinliyor olabilir. O yüzden publish ettik.
+                await _publishEndpoint.Publish(stockNotReservedEvent);
+
+                await Console.Out.WriteLineAsync("Stok işlemleri başarısız.");
+            }
         }
     }
 }

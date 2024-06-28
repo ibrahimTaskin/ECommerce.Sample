@@ -20,7 +20,7 @@ builder.Services.AddMassTransit(config =>
     config.UsingRabbitMq((context, _congif) =>
     {
         _congif.Host(builder.Configuration["RabbitMq"]);
-        _congif.ReceiveEndpoint(RabbitMqSettings.StockOrderCreatedEventQueue,
+        _congif.ReceiveEndpoint(RabbitMqSettings.OrderCreatedEventQueue,
                 e => e.ConfigureConsumer<OrderCreatedEventConsumer>(context));        
     });
 });
